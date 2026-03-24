@@ -145,14 +145,16 @@ export default function App() {
 
 function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, setLang: (l: Language) => void }) {
   const t = translations[lang];
-  const [maxHours, setMaxHours] = useState<string>('180');
+  const [maxHours, setMaxHours] = useState<string>(() => localStorage.getItem(`maxHours_${user.uid}`) || '180');
   const [workedHours, setWorkedHours] = useState<string>('180');
-  const [kpi, setKpi] = useState<string>('95');
-  const [otrs, setOtrs] = useState<string>('95');
-  const [complaints, setComplaints] = useState<string>('0');
-  const [mistakes, setMistakes] = useState<string>('0');
-  const [hourlyRate, setHourlyRate] = useState<string>('5');
+  const [manualHours, setManualHours] = useState<string>(() => localStorage.getItem(`manualHours_${user.uid}`) || '0');
+  const [kpi, setKpi] = useState<string>(() => localStorage.getItem(`kpi_${user.uid}`) || '95');
+  const [otrs, setOtrs] = useState<string>(() => localStorage.getItem(`otrs_${user.uid}`) || '95');
+  const [complaints, setComplaints] = useState<string>(() => localStorage.getItem(`complaints_${user.uid}`) || '0');
+  const [mistakes, setMistakes] = useState<string>(() => localStorage.getItem(`mistakes_${user.uid}`) || '0');
+  const [hourlyRate, setHourlyRate] = useState<string>(() => localStorage.getItem(`hourlyRate_${user.uid}`) || '5');
   const [paidDaysOff, setPaidDaysOff] = useState<string>('0');
+  const [additionalBonus, setAdditionalBonus] = useState<string>(() => localStorage.getItem(`additionalBonus_${user.uid}`) || '0');
 
   const [kpiPoints, setKpiPoints] = useState<number>(0);
   const [otrsPoints, setOtrsPoints] = useState<number>(0);
@@ -186,6 +188,17 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
     return () => unsubscribe();
   }, [user.uid]);
 
+  useEffect(() => {
+    localStorage.setItem(`maxHours_${user.uid}`, maxHours);
+    localStorage.setItem(`kpi_${user.uid}`, kpi);
+    localStorage.setItem(`otrs_${user.uid}`, otrs);
+    localStorage.setItem(`complaints_${user.uid}`, complaints);
+    localStorage.setItem(`mistakes_${user.uid}`, mistakes);
+    localStorage.setItem(`hourlyRate_${user.uid}`, hourlyRate);
+    localStorage.setItem(`manualHours_${user.uid}`, manualHours);
+    localStorage.setItem(`additionalBonus_${user.uid}`, additionalBonus);
+  }, [maxHours, kpi, otrs, complaints, mistakes, hourlyRate, manualHours, additionalBonus, user.uid]);
+
   const handleNumberChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = e.target.value;
     val = val.replace(/^0+(?=\d)/, '');
@@ -195,12 +208,16 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
   useEffect(() => {
     const numMaxHours = Number(maxHours) || 0;
     const numWorkedHours = Number(workedHours) || 0;
+    const numManualHours = Number(manualHours) || 0;
     const numKpi = Number(kpi) || 0;
     const numOtrs = Number(otrs) || 0;
     const numComplaints = Number(complaints) || 0;
     const numMistakes = Number(mistakes) || 0;
     const numHourlyRate = Number(hourlyRate) || 0;
     const numPaidDaysOff = Number(paidDaysOff) || 0;
+    const numAdditionalBonus = Number(additionalBonus) || 0;
+
+    const totalWorkedHours = numWorkedHours + numManualHours;
 
     // KPI Points
     let kp = 0;
@@ -234,15 +251,15 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
     setTotalPoints(tp);
 
     // Bonus
-    const hourRatio = numMaxHours > 0 ? numWorkedHours / numMaxHours : 0;
+    const hourRatio = numMaxHours > 0 ? totalWorkedHours / numMaxHours : 0;
     const finalBonus = Math.max(0, tp * 0.5 * hourRatio);
     setBonus(finalBonus);
 
-    // Salary (Worked Hours + Paid Days Off * 9) * Hourly Rate
-    const calculatedBaseSalary = (numWorkedHours + (numPaidDaysOff * 9)) * numHourlyRate;
+    // Salary (Worked Hours + Manual Hours + Paid Days Off * 9) * Hourly Rate
+    const calculatedBaseSalary = (totalWorkedHours + (numPaidDaysOff * 9)) * numHourlyRate;
     setBaseSalary(calculatedBaseSalary);
-    setTotalPay(calculatedBaseSalary + finalBonus);
-  }, [maxHours, workedHours, kpi, otrs, complaints, mistakes, hourlyRate, paidDaysOff]);
+    setTotalPay(calculatedBaseSalary + finalBonus + numAdditionalBonus);
+  }, [maxHours, workedHours, manualHours, kpi, otrs, complaints, mistakes, hourlyRate, paidDaysOff, additionalBonus]);
 
   const saveCurrentMonth = async () => {
     const recordId = `${user.uid}_${currentMonth}`;
@@ -361,6 +378,35 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
                   </div>
                 </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-slate-400" />
+                      {t.manualHours}
+                    </label>
+                    <input
+                      type="number"
+                      value={manualHours}
+                      onChange={handleNumberChange(setManualHours)}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                      min="0"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-slate-400" />
+                      {t.paidDaysOff}
+                    </label>
+                    <input
+                      type="number"
+                      value={paidDaysOff}
+                      onChange={handleNumberChange(setPaidDaysOff)}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                      min="0"
+                    />
+                  </div>
+                </div>
+
                 <hr className="border-slate-100" />
 
                 {/* Metrics */}
@@ -445,13 +491,13 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-slate-400" />
-                      {t.paidDaysOff}
+                      <Euro className="w-4 h-4 text-slate-400" />
+                      {t.additionalBonus}
                     </label>
                     <input
                       type="number"
-                      value={paidDaysOff}
-                      onChange={handleNumberChange(setPaidDaysOff)}
+                      value={additionalBonus}
+                      onChange={handleNumberChange(setAdditionalBonus)}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
                       min="0"
                     />
@@ -536,7 +582,7 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-slate-400">{t.hoursFactor}</span>
                     <span className="font-mono text-slate-300">
-                      {workedHours || 0} / {maxHours || 0} ({(Number(maxHours) > 0 ? (Number(workedHours) / Number(maxHours)) * 100 : 0).toFixed(1)}%)
+                      {Number(workedHours) + Number(manualHours)} / {maxHours || 0} ({(Number(maxHours) > 0 ? ((Number(workedHours) + Number(manualHours)) / Number(maxHours)) * 100 : 0).toFixed(1)}%)
                     </span>
                   </div>
                 </div>
@@ -551,6 +597,12 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
                   <span className="text-slate-400">{t.bonus}</span>
                   <span className="font-mono text-lg text-emerald-400">+{bonus.toFixed(2)} €</span>
                 </div>
+                {Number(additionalBonus) > 0 && (
+                  <div className="flex justify-between items-center py-2 border-b border-slate-800">
+                    <span className="text-slate-400">{t.additionalBonus}</span>
+                    <span className="font-mono text-lg text-emerald-400">+{Number(additionalBonus).toFixed(2)} €</span>
+                  </div>
+                )}
               </div>
 
               <div className="bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl p-6 shadow-inner relative overflow-hidden mb-6">
