@@ -40,8 +40,8 @@ Personalna web aplikacija za praćenje i izračun plaće i bonusa — napravljen
 3. Kreiraj .env fajl u root folderu:
 
    Isječak koda
-   VITE_GEMINI_API_KEY=tvoj_gemini_api_kljuc
-   VITE_FIREBASE_API_KEY=tvoj_firebase_api_kljuc
+   * VITE_GEMINI_API_KEY=tvoj_gemini_api_kljuc
+   * VITE_FIREBASE_API_KEY=tvoj_firebase_api_kljuc
 
 4. Pokreni aplikaciju:
 
