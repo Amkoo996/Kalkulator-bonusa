@@ -83,3 +83,5 @@ Personalna web aplikacija za praćenje i izračun plaće i bonusa — napravljen
 ## 📝 Napomena
 
 `.env` fajl **nije** commitovan u repozitorij. Svaki developer treba kreirati vlastiti `.env` lokalno.
+
+Stranica je trenutno online, te primjer možete vidjeti na demo linku - https://4e8d7ece.kalkulator-bonusa.pages.dev/
