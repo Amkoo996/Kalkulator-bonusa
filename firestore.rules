@@ -1,0 +1,132 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {userId}
+    // Fields:
+    //   - uid: string (required, immutable)
+    //   - name: string (required)
+    //   - email: string (required)
+    //   - language: string (optional, 'bs' or 'en')
+    //   - hourlyRate: number (optional)
+    //   - maxHours: number (optional)
+    //
+    // Collection: salaryHistory
+    // Document ID: {recordId}
+    // Fields:
+    //   - uid: string (required, immutable)
+    //   - month: string (required)
+    //   - baseSalary: number (required)
+    //   - bonus: number (required)
+    //   - totalPay: number (required)
+    //   - createdAt: string (required, immutable)
+    //
+    // Collection: shifts
+    // Document ID: {shiftId}
+    // Fields:
+    //   - uid: string (required, immutable)
+    //   - date: string (required)
+    //   - startTime: string (required)
+    //   - endTime: string (required)
+    //   - createdAt: string (required, immutable)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.uid;
+    }
+
+    function uidUnchanged() {
+      return !('uid' in request.resource.data) || request.resource.data.uid == request.auth.uid;
+    }
+
+    function uidNotModified() {
+      return !('uid' in request.resource.data) || request.resource.data.uid == resource.data.uid;
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+    function isValidUser(data) {
+      return hasOnlyAllowedFields(['uid', 'name', 'email', 'language', 'hourlyRate', 'maxHours']) &&
+             data.uid is string && data.uid.size() > 0 && data.uid.size() < 100 &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.email is string && isValidEmail(data.email) &&
+             (!('language' in data) || (data.language in ['bs', 'en'])) &&
+             (!('hourlyRate' in data) || (data.hourlyRate is number && data.hourlyRate >= 0)) &&
+             (!('maxHours' in data) || (data.maxHours is number && data.maxHours >= 0));
+    }
+
+    function isValidSalaryRecord(data) {
+      return hasOnlyAllowedFields(['uid', 'month', 'baseSalary', 'bonus', 'totalPay', 'createdAt']) &&
+             data.uid is string && data.uid.size() > 0 && data.uid.size() < 100 &&
+             data.month is string && data.month.size() > 0 && data.month.size() < 20 &&
+             data.baseSalary is number && data.baseSalary >= 0 &&
+             data.bonus is number && data.bonus >= 0 &&
+             data.totalPay is number && data.totalPay >= 0 &&
+             data.createdAt is string && data.createdAt.size() > 0 && data.createdAt.size() < 50;
+    }
+
+    function isValidShift(data) {
+      return hasOnlyAllowedFields(['uid', 'date', 'startTime', 'endTime', 'type', 'createdAt']) &&
+             data.uid is string && data.uid.size() > 0 && data.uid.size() < 100 &&
+             data.date is string && data.date.size() > 0 && data.date.size() < 20 &&
+             (!('startTime' in data) || (data.startTime is string && data.startTime.size() >= 0 && data.startTime.size() < 10)) &&
+             (!('endTime' in data) || (data.endTime is string && data.endTime.size() >= 0 && data.endTime.size() < 10)) &&
+             (!('type' in data) || (data.type is string && data.type.size() > 0 && data.type.size() < 20)) &&
+             data.createdAt is string && data.createdAt.size() > 0 && data.createdAt.size() < 50;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && hasRequiredFields(['uid', 'name', 'email']) && isValidUser(request.resource.data) && uidUnchanged();
+      allow update: if isOwner(userId) && isValidUser(request.resource.data) && uidNotModified();
+      allow delete: if isOwner(userId);
+    }
+
+    match /salaryHistory/{recordId} {
+      allow read: if isDocOwner();
+      allow create: if isAuthenticated() && hasRequiredFields(['uid', 'month', 'baseSalary', 'bonus', 'totalPay', 'createdAt']) && isValidSalaryRecord(request.resource.data) && uidUnchanged();
+      allow update: if isDocOwner() && isValidSalaryRecord(request.resource.data) && uidNotModified() && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isDocOwner();
+    }
+
+    match /shifts/{shiftId} {
+      allow read: if isDocOwner();
+      allow create: if isAuthenticated() && hasRequiredFields(['uid', 'date', 'startTime', 'endTime', 'createdAt']) && isValidShift(request.resource.data) && uidUnchanged();
+      allow update: if isDocOwner() && isValidShift(request.resource.data) && uidNotModified();
+      allow delete: if isDocOwner();
+    }
+  }
+}

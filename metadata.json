@@ -1,0 +1,5 @@
+{
+  "name": "Kalkulator Bonusa",
+  "description": "Aplikacija za izračun mjesečnog bonusa na temelju KPI, OTRS, CSAT i radnih sati.",
+  "requestFramePermissions": []
+}

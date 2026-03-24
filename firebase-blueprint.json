@@ -1,0 +1,120 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile containing basic settings and preferences.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The unique identifier of the user."
+        },
+        "name": {
+          "type": "string",
+          "description": "The display name of the user."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "The email address of the user."
+        },
+        "language": {
+          "type": "string",
+          "enum": ["bs", "en"],
+          "description": "Preferred language of the user."
+        },
+        "hourlyRate": {
+          "type": "number",
+          "description": "Default hourly rate."
+        },
+        "maxHours": {
+          "type": "number",
+          "description": "Default maximum hours (fond sati)."
+        }
+      },
+      "required": ["uid", "name", "email"]
+    },
+    "SalaryRecord": {
+      "title": "SalaryRecord",
+      "description": "A monthly record of salary and bonus.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The user ID this record belongs to."
+        },
+        "month": {
+          "type": "string",
+          "description": "The month in YYYY-MM format."
+        },
+        "baseSalary": {
+          "type": "number",
+          "description": "Calculated base salary."
+        },
+        "bonus": {
+          "type": "number",
+          "description": "Calculated bonus."
+        },
+        "totalPay": {
+          "type": "number",
+          "description": "Total pay for the month."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the record was created."
+        }
+      },
+      "required": ["uid", "month", "baseSalary", "bonus", "totalPay", "createdAt"]
+    },
+    "Shift": {
+      "title": "Shift",
+      "description": "A scheduled work shift.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The user ID this shift belongs to."
+        },
+        "date": {
+          "type": "string",
+          "description": "The date of the shift in YYYY-MM-DD format."
+        },
+        "startTime": {
+          "type": "string",
+          "description": "Start time in HH:mm format."
+        },
+        "endTime": {
+          "type": "string",
+          "description": "End time in HH:mm format."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the shift was added."
+        }
+      },
+      "required": ["uid", "date", "startTime", "endTime", "createdAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Stores user profiles."
+    },
+    "salaryHistory/{recordId}": {
+      "schema": {
+        "$ref": "#/entities/SalaryRecord"
+      },
+      "description": "Stores monthly salary records."
+    },
+    "shifts/{shiftId}": {
+      "schema": {
+        "$ref": "#/entities/Shift"
+      },
+      "description": "Stores user work shifts."
+    }
+  }
+}
