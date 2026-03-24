@@ -279,11 +279,11 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-indigo-100 selection:text-indigo-900 pb-12">
-      <div className="max-w-5xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8">
         
         {/* Header */}
-        <header className="mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+        <header className="mb-6 sm:mb-8 flex flex-col items-center justify-center gap-4 px-2 sm:px-0 text-center">
+          <div className="flex flex-col items-center gap-3">
             <div className="bg-indigo-600 p-3 rounded-2xl shadow-sm flex items-center justify-center">
               <Calculator className="w-8 h-8 text-white" />
             </div>
@@ -292,7 +292,7 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
               <p className="text-slate-500 mt-1">{t.subtitle}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center gap-3">
             <button 
               onClick={() => setLang(lang === 'bs' ? 'en' : 'bs')}
               className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
@@ -311,8 +311,8 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
         </header>
 
         {/* Countdown Banner */}
-        <div className="mb-8 bg-white border border-indigo-100 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3 text-indigo-600">
+        <div className="mb-8 bg-white border border-indigo-100 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col items-center justify-center gap-4 text-center">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-indigo-600">
             <CalendarDays className="w-6 h-6" />
             <span className="font-medium">{t.countdownPrefix}</span>
           </div>
@@ -323,8 +323,8 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
 
         {/* Notifications Banner */}
         {permission !== 'granted' && (
-          <div className="mb-8 bg-amber-50 border border-amber-200 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3 text-amber-700">
+          <div className="mb-8 bg-amber-50 border border-amber-200 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col items-center justify-center gap-4 text-center">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-amber-700">
               <Bell className="w-6 h-6" />
               <span className="font-medium">{t.notifications}</span>
             </div>
@@ -340,9 +340,9 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Inputs Section */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6 sm:p-8">
-              <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+          <div className="lg:col-span-7 space-y-4 sm:space-y-6">
+            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200/60 p-4 sm:p-8">
+              <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 flex items-center justify-center gap-2 text-center">
                 <Info className="w-5 h-5 text-indigo-500" />
                 {t.dataEntry} {currentMonth}
               </h2>
@@ -518,28 +518,28 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
             
             {/* History Section */}
             {history.length > 0 && (
-              <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6 sm:p-8 mt-8">
-                <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+              <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200/60 p-4 sm:p-8 mt-6 sm:mt-8">
+                <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 flex items-center justify-center gap-2 text-center">
                   <History className="w-5 h-5 text-indigo-500" />
                   {t.history}
                 </h2>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
+                  <table className="w-full text-center border-collapse">
                     <thead>
                       <tr className="border-b border-slate-200 text-sm text-slate-500">
-                        <th className="pb-3 font-medium">{t.month}</th>
-                        <th className="pb-3 font-medium text-right">{t.baseSalary}</th>
-                        <th className="pb-3 font-medium text-right">{t.bonus}</th>
-                        <th className="pb-3 font-medium text-right">{t.total}</th>
+                        <th className="pb-3 font-medium text-center">{t.month}</th>
+                        <th className="pb-3 font-medium text-center">{t.baseSalary}</th>
+                        <th className="pb-3 font-medium text-center">{t.bonus}</th>
+                        <th className="pb-3 font-medium text-center">{t.total}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {history.map((record) => (
                         <tr key={record.id} className="border-b border-slate-100 last:border-0">
-                          <td className="py-4 font-medium text-slate-700">{record.month}</td>
-                          <td className="py-4 text-right text-slate-600">{record.baseSalary.toFixed(2)} €</td>
-                          <td className="py-4 text-right text-emerald-600">+{record.bonus.toFixed(2)} €</td>
-                          <td className="py-4 text-right font-bold text-indigo-600">{record.totalPay.toFixed(2)} €</td>
+                          <td className="py-4 font-medium text-slate-700 text-center">{record.month}</td>
+                          <td className="py-4 text-center text-slate-600">{record.baseSalary.toFixed(2)} €</td>
+                          <td className="py-4 text-center text-emerald-600">+{record.bonus.toFixed(2)} €</td>
+                          <td className="py-4 text-center font-bold text-indigo-600">{record.totalPay.toFixed(2)} €</td>
                         </tr>
                       ))}
                     </tbody>
@@ -551,8 +551,8 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
 
           {/* Results Section */}
           <div className="lg:col-span-5">
-            <div className="bg-slate-900 rounded-3xl shadow-xl p-6 sm:p-8 text-white sticky top-8">
-              <h2 className="text-xl font-semibold mb-6 text-slate-100 flex items-center gap-2">
+            <div className="bg-slate-900 rounded-2xl sm:rounded-3xl shadow-xl p-5 sm:p-8 text-white sticky top-4 sm:top-8 text-center">
+              <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-slate-100 flex items-center justify-center gap-2 text-center">
                 {t.results}
               </h2>
 
@@ -579,7 +579,7 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
                 </div>
                 
                 <div className="bg-slate-800/50 rounded-xl p-4 mt-4">
-                  <div className="flex justify-between items-center text-sm">
+                  <div className="flex flex-col items-center justify-center text-sm gap-1">
                     <span className="text-slate-400">{t.hoursFactor}</span>
                     <span className="font-mono text-slate-300">
                       {Number(workedHours) + Number(manualHours)} / {maxHours || 0} ({(Number(maxHours) > 0 ? ((Number(workedHours) + Number(manualHours)) / Number(maxHours)) * 100 : 0).toFixed(1)}%)
@@ -605,10 +605,10 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
                 )}
               </div>
 
-              <div className="bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl p-6 shadow-inner relative overflow-hidden mb-6">
+              <div className="bg-gradient-to-br from-indigo-500 to-violet-600 rounded-2xl p-6 shadow-inner relative overflow-hidden mb-6 flex flex-col items-center justify-center">
                 <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-10 rounded-full blur-2xl"></div>
                 <p className="text-indigo-100 text-sm font-medium mb-1">{t.totalPay}</p>
-                <div className="flex items-baseline gap-2">
+                <div className="flex items-baseline justify-center gap-2">
                   <span className="text-5xl font-bold tracking-tight">
                     {totalPay.toFixed(2)}
                   </span>
