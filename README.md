@@ -4,25 +4,24 @@ Personalna web aplikacija za praćenje i izračun plaće i bonusa — napravljen
 
 ## ✨ Funkcionalnosti
 
-- **Google prijava** — sigurna autentifikacija, podaci vezani za tvoj račun
-- **Kalkulator bonusa** — unos sati, KPI, OTRS, grešaka, complaints i satnice; automatski izračun osnovice i bonusa
-- **Odbrojavanje do isplate** — live timer koji pokazuje koliko je ostalo do prvog radnog dana u mjesecu
-- **AI skeniranje rasporeda** — upload slike ili unos teksta rasporeda, Gemini AI automatski izvlači smjene i sprema ih
-- **Povijest isplata** — pregled svih spremljenih obračuna po mjesecima
-- **Notifikacije** — podsjetnici vezani za isplatu i raspored
-- **Višejezičnost** — podrška za bosanski/hrvatski i engleski jezik
+- **📱 PWA Podrška** — Instaliraj aplikaciju direktno na svoj telefon (Home Screen) ili desktop za brz pristup bez browsera.
+- **Google prijava** — Sigurna autentifikacija putem Firebase-a, podaci su vezani isključivo za tvoj račun.
+- **Kalkulator bonusa** — Unos sati, KPI, OTRS, grešaka i satnice; automatski izračun osnovice i bonusa.
+- **AI skeniranje rasporeda** — Upload slike ili unos teksta rasporeda; Gemini AI automatski izvlači smjene i sprema ih u kalendar.
+- **Odbrojavanje do isplate** — Live timer koji pokazuje koliko je ostalo do prvog radnog dana u mjesecu.
+- **Povijest isplata** — Pregled svih spremljenih obračuna po mjesecima kroz Firestore bazu.
+- **Višejezičnost** — Potpuna podrška za bosanski/hrvatski i engleski jezik.
 
 ## 🛠️ Tech Stack
 
 | Tehnologija | Svrha |
 |-------------|-------|
-| React + TypeScript | Frontend |
-| Vite | Build tool |
-| Firebase Auth | Google prijava |
-| Firestore | Baza podataka |
-| Gemini AI API | AI skeniranje rasporeda |
-| Tailwind CSS | Stilizacija |
-| Cloudflare Pages | Hosting |
+| **React + TypeScript** | Frontend logika |
+| **Vite** | Build tool & PWA plugin |
+| **Firebase (Auth & Firestore)** | Korisnici i baza podataka |
+| **Gemini AI API** | Pametno čitanje rasporeda sa slika |
+| **Tailwind CSS** | Moderan i responzivan dizajn |
+| **Cloudflare Pages** | Brz i siguran hosting |
 
 ## 🚀 Pokretanje lokalno
 
@@ -30,58 +29,35 @@ Personalna web aplikacija za praćenje i izračun plaće i bonusa — napravljen
 
 1. Kloniraj repozitorij:
    ```bash
-   git clone https://github.com/Amkoo996/Kalkulator-bonusa.git
+   git clone [https://github.com/Amkoo996/Kalkulator-bonusa.git](https://github.com/Amkoo996/Kalkulator-bonusa.git)
    cd Kalkulator-bonusa
-   ```
+Instaliraj pakete:
 
-2. Instaliraj dependencies:
-   ```bash
-   npm install
-   ```
+Bash
+npm install
+Kreiraj .env fajl u root folderu:
 
-3. Kreiraj `.env` fajl:
-   ```env
-   VITE_GEMINI_API_KEY=tvoj_gemini_api_kljuc
-   VITE_FIREBASE_API_KEY=tvoj_firebase_api_kljuc
-   ```
+Isječak koda
+VITE_GEMINI_API_KEY=tvoj_gemini_api_kljuc
+VITE_FIREBASE_API_KEY=tvoj_firebase_api_kljuc
+Pokreni aplikaciju:
 
-4. Pokreni razvojni server:
-   ```bash
-   npm run dev
-   ```
+Bash
+npm run dev
+☁️ Deploy na Cloudflare Pages
+Poveži GitHub repozitorij na Cloudflare Pages.
 
-## ☁️ Deploy na Cloudflare Pages
+Build postavke:
 
-1. Poveži GitHub repozitorij u Cloudflare Pages
-2. Build postavke:
-   - **Build command:** `npm run build`
-   - **Output directory:** `dist`
-3. Dodaj environment varijable u **Settings → Environment variables**:
-   - `VITE_GEMINI_API_KEY`
-   - `VITE_FIREBASE_API_KEY`
+Build command: npm install && npm run build
 
-## 🔑 API ključevi
+Output directory: dist
 
-- **Gemini API** → [aistudio.google.com](https://aistudio.google.com) → API Keys
-- **Firebase** → [Firebase Console](https://console.firebase.google.com) → Project Settings → Your apps
+U Settings → Environment variables dodaj:
 
-## 📁 Struktura projekta
+VITE_GEMINI_API_KEY
 
-```
-├── src/
-│   ├── App.tsx                  # Glavna komponenta
-│   ├── firebase.ts              # Firebase konfiguracija
-│   ├── i18n.ts                  # Prijevodi (bs/en)
-│   ├── components/
-│   │   └── ScheduleScanner.tsx  # AI skeniranje rasporeda
-│   └── hooks/
-│       └── useNotifications.ts  # Notifikacije
-├── .env                         # API ključevi (nije u git-u)
-└── firestore.rules              # Firebase sigurnosna pravila
-```
+VITE_FIREBASE_API_KEY
 
-## 📝 Napomena
-
-`.env` fajl **nije** commitovan u repozitorij. Svaki developer treba kreirati vlastiti `.env` lokalno.
-
-Stranica je trenutno online, te primjer možete vidjeti na demo linku - https://kalkulator-bonusa.pages.dev/
+🔗 Demo
+Aplikacija je dostupna na: https://kalkulator-bonusa.pages.dev/
