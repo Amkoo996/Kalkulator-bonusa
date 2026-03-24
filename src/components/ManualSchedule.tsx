@@ -154,7 +154,7 @@ export default function ManualSchedule({ uid, lang, onHoursCalculated }: ManualS
     // Headers
     weekDays.forEach(day => {
       days.push(
-        <div key={`header-${day}`} className="text-center font-semibold text-slate-500 text-sm py-2">
+        <div key={`header-${day}`} className="text-center font-semibold text-slate-500 text-[10px] sm:text-sm py-1 sm:py-2 truncate">
           {day}
         </div>
       );
@@ -162,7 +162,7 @@ export default function ManualSchedule({ uid, lang, onHoursCalculated }: ManualS
 
     // Empty cells
     for (let i = 0; i < firstDay; i++) {
-      days.push(<div key={`empty-${i}`} className="p-2"></div>);
+      days.push(<div key={`empty-${i}`} className="p-1 sm:p-2"></div>);
     }
 
     // Days
@@ -174,29 +174,33 @@ export default function ManualSchedule({ uid, lang, onHoursCalculated }: ManualS
         <div 
           key={i} 
           onClick={() => handleDayClick(i)}
-          className={`min-h-[80px] p-2 border border-slate-100 rounded-xl cursor-pointer transition-all hover:border-indigo-300 hover:shadow-sm flex flex-col ${
+          className={`min-h-[60px] sm:min-h-[80px] p-1 sm:p-2 border border-slate-100 rounded-lg sm:rounded-xl cursor-pointer transition-all hover:border-indigo-300 hover:shadow-sm flex flex-col ${
             shift ? (shift.type === 'slobodan_dan' ? 'bg-emerald-50 border-emerald-200' : 'bg-indigo-50 border-indigo-200') : 'bg-white'
           }`}
         >
           <div className="flex justify-between items-start mb-1">
-            <span className={`font-medium text-sm ${shift ? 'text-slate-900' : 'text-slate-500'}`}>{i}</span>
+            <span className={`font-medium text-xs sm:text-sm ${shift ? 'text-slate-900' : 'text-slate-500'}`}>{i}</span>
             {shift && (
               <button 
                 onClick={(e) => { e.stopPropagation(); handleDeleteShift(dateStr); }}
-                className="text-slate-400 hover:text-red-500 transition-colors"
+                className="text-slate-400 hover:text-red-500 transition-colors p-0.5 sm:p-0"
                 title="Obriši"
               >
-                <X className="w-3 h-3" />
+                <X className="w-3 h-3 sm:w-4 sm:h-4" />
               </button>
             )}
           </div>
           
           {shift && (
-            <div className="mt-auto text-xs font-medium text-center py-1 rounded-md bg-white/60">
+            <div className="mt-auto text-[9px] sm:text-xs font-medium text-center py-0.5 sm:py-1 rounded bg-white/60 leading-none sm:leading-tight">
               {shift.type === 'slobodan_dan' ? (
-                <span className="text-emerald-600">Slobodan dan</span>
+                <span className="text-emerald-600 block truncate" title="Slobodan dan">Slob.</span>
               ) : (
-                <span className="text-indigo-600">{shift.startTime} - {shift.endTime}</span>
+                <span className="text-indigo-600 flex flex-col sm:block">
+                  <span>{shift.startTime}</span>
+                  <span className="hidden sm:inline"> - </span>
+                  <span>{shift.endTime}</span>
+                </span>
               )}
             </div>
           )}
@@ -218,27 +222,27 @@ export default function ManualSchedule({ uid, lang, onHoursCalculated }: ManualS
   const monthNames = ['Januar', 'Februar', 'Mart', 'April', 'Maj', 'Juni', 'Juli', 'August', 'Septembar', 'Oktobar', 'Novembar', 'Decembar'];
 
   return (
-    <div className="bg-white rounded-3xl shadow-sm border border-slate-200/60 p-6 sm:p-8 mt-8">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold flex items-center gap-2">
+    <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200/60 p-3 sm:p-8 mt-6 sm:mt-8 overflow-hidden text-center">
+      <div className="flex flex-col items-center justify-center mb-4 sm:mb-6 gap-4">
+        <h2 className="text-lg sm:text-xl font-semibold flex items-center justify-center gap-2 text-center">
           <CalendarIcon className="w-5 h-5 text-indigo-500" />
           Raspored smjena
         </h2>
         
-        <div className="flex items-center gap-4">
-          <button onClick={prevMonth} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+        <div className="flex items-center justify-center w-full sm:w-auto gap-2 sm:gap-4 bg-slate-50 p-1 rounded-xl border border-slate-100 mx-auto">
+          <button onClick={prevMonth} className="p-2 hover:bg-white rounded-lg transition-colors shadow-sm">
             &larr;
           </button>
-          <span className="font-medium text-slate-700 min-w-[120px] text-center">
+          <span className="font-medium text-slate-700 min-w-[100px] sm:min-w-[120px] text-center text-sm sm:text-base">
             {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
           </span>
-          <button onClick={nextMonth} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+          <button onClick={nextMonth} className="p-2 hover:bg-white rounded-lg transition-colors shadow-sm">
             &rarr;
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-2 mb-4">
+      <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-2 sm:mb-4">
         {renderCalendar()}
       </div>
 
@@ -255,12 +259,12 @@ export default function ManualSchedule({ uid, lang, onHoursCalculated }: ManualS
 
             {!isCustom ? (
               <div className="space-y-3">
-                <p className="text-sm text-slate-500 mb-2">Standardne smjene:</p>
+                <p className="text-sm text-slate-500 mb-2 text-center">Standardne smjene:</p>
                 {STANDARD_SHIFTS.map((shift, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSaveShift('regular', shift.start, shift.end)}
-                    className="w-full text-left px-4 py-3 rounded-xl border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50 transition-all flex items-center gap-3"
+                    className="w-full text-center px-4 py-3 rounded-xl border border-slate-200 hover:border-indigo-500 hover:bg-indigo-50 transition-all flex items-center justify-center gap-3"
                   >
                     <Clock className="w-4 h-4 text-indigo-500" />
                     <span className="font-medium text-slate-700">{shift.label}</span>
@@ -271,7 +275,7 @@ export default function ManualSchedule({ uid, lang, onHoursCalculated }: ManualS
                 
                 <button
                   onClick={() => handleSaveShift('slobodan_dan')}
-                  className="w-full text-left px-4 py-3 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 transition-all flex items-center gap-3"
+                  className="w-full text-center px-4 py-3 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 transition-all flex items-center justify-center gap-3"
                 >
                   <span className="w-4 h-4 rounded-full bg-emerald-500"></span>
                   <span className="font-medium text-emerald-800">Slobodan dan (Plaćeno 9h)</span>
@@ -279,31 +283,31 @@ export default function ManualSchedule({ uid, lang, onHoursCalculated }: ManualS
 
                 <button
                   onClick={() => setIsCustom(true)}
-                  className="w-full text-left px-4 py-3 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all flex items-center gap-3 mt-2"
+                  className="w-full text-center px-4 py-3 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all flex items-center justify-center gap-3 mt-2"
                 >
                   <Edit2 className="w-4 h-4 text-slate-500" />
                   <span className="font-medium text-slate-700">Prilagođeno vrijeme</span>
                 </button>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-4 text-center">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Početak</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1 text-center">Početak</label>
                     <input 
                       type="time" 
                       value={customStart}
                       onChange={(e) => setCustomStart(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-center"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Kraj</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1 text-center">Kraj</label>
                     <input 
                       type="time" 
                       value={customEnd}
                       onChange={(e) => setCustomEnd(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-center"
                     />
                   </div>
                 </div>
