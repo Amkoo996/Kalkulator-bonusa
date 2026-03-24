@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+@layer base {
+  input[type="number"], input[type="time"] {
+    @apply text-center;
+  }
+  label.flex {
+    @apply justify-center text-center;
+  }
+}
