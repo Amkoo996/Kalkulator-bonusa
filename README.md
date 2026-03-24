@@ -31,33 +31,55 @@ Personalna web aplikacija za praćenje i izračun plaće i bonusa — napravljen
    ```bash
    git clone [https://github.com/Amkoo996/Kalkulator-bonusa.git](https://github.com/Amkoo996/Kalkulator-bonusa.git)
    cd Kalkulator-bonusa
-Instaliraj pakete:
+   
+2. Instaliraj pakete:
 
 Bash
 npm install
-Kreiraj .env fajl u root folderu:
+
+3. Kreiraj .env fajl u root folderu:
 
 Isječak koda
 VITE_GEMINI_API_KEY=tvoj_gemini_api_kljuc
 VITE_FIREBASE_API_KEY=tvoj_firebase_api_kljuc
-Pokreni aplikaciju:
+
+4. Pokreni aplikaciju:
 
 Bash
 npm run dev
+
 ☁️ Deploy na Cloudflare Pages
-Poveži GitHub repozitorij na Cloudflare Pages.
+   1. Poveži GitHub repozitorij na Cloudflare Pages.
 
-Build postavke:
+   2. Build postavke:
 
-Build command: npm install && npm run build
+      * Build command: npm install && npm run build
 
-Output directory: dist
+      * Output directory: dist
 
-U Settings → Environment variables dodaj:
+   3. U Settings → Environment variables dodaj:
 
 VITE_GEMINI_API_KEY
 
 VITE_FIREBASE_API_KEY
 
+🔑 API ključevi
+   * Gemini API → Nabavi na aistudio.google.com
+
+   * Firebase → Postavke projekta na Firebase Console
+
+📁 Struktura projekta
+├── public/
+│   └── _headers             # Sigurnosne polise za Cloudflare (COOP)
+├── src/
+│   ├── App.tsx              # Glavna logika i Gemini integracija
+│   ├── firebase.ts          # Firebase konfiguracija
+│   ├── i18n.ts              # Prijevodi (bs/en)
+│   ├── components/          # UI komponente (Scanner, Modals)
+│   └── hooks/               # Custom React hooks
+└── vite.config.ts           # Vite & PWA konfiguracija
+
 🔗 Demo
-Aplikacija je dostupna na: https://kalkulator-bonusa.pages.dev/
+Aplikacija je trenutno online: https://kalkulator-bonusa.pages.dev/
+
+Napomena: .env fajl je sakriven (gitignore) radi sigurnosti tvojih privatnih ključeva.
