@@ -34,19 +34,19 @@ Personalna web aplikacija za praćenje i izračun plaće i bonusa — napravljen
    
 2. Instaliraj pakete:
 
-Bash
-npm install
+   Bash
+   npm install
 
 3. Kreiraj .env fajl u root folderu:
 
-Isječak koda
-VITE_GEMINI_API_KEY=tvoj_gemini_api_kljuc
-VITE_FIREBASE_API_KEY=tvoj_firebase_api_kljuc
+   Isječak koda
+   VITE_GEMINI_API_KEY=tvoj_gemini_api_kljuc
+   VITE_FIREBASE_API_KEY=tvoj_firebase_api_kljuc
 
 4. Pokreni aplikaciju:
 
-Bash
-npm run dev
+   Bash
+   npm run dev
 
 ☁️ Deploy na Cloudflare Pages
    1. Poveži GitHub repozitorij na Cloudflare Pages.
@@ -80,6 +80,6 @@ VITE_FIREBASE_API_KEY
 └── vite.config.ts           # Vite & PWA konfiguracija
 
 🔗 Demo
-Aplikacija je trenutno online: https://kalkulator-bonusa.pages.dev/
+   Aplikacija je trenutno online: https://kalkulator-bonusa.pages.dev/
 
 Napomena: .env fajl je sakriven (gitignore) radi sigurnosti tvojih privatnih ključeva.
