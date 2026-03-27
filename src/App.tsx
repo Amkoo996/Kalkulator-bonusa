@@ -6,7 +6,7 @@ import { collection, doc, setDoc, getDoc, query, where, onSnapshot, orderBy } fr
 import { translations, Language } from './i18n';
 import ManualSchedule from './components/ManualSchedule';
 import { useNotifications } from './hooks/useNotifications';
-import { Toaster } from 'react-hot-toast';
+import { Toaster, toast } from 'react-hot-toast';
 
 // Helper to get first working day of a given year and month
 function getFirstWorkingDay(year: number, month: number) {
