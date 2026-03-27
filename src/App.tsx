@@ -356,6 +356,8 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
                       {t.maxHours}
                     </label>
                     <input
+                      id="maxHours"
+                      name="maxHours"
                       type="number"
                       value={maxHours}
                       onChange={handleNumberChange(setMaxHours)}
@@ -369,6 +371,8 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
                       {t.workedHours}
                     </label>
                     <input
+                      id="workedHours"
+                      name="workedHours"
                       type="number"
                       value={workedHours}
                       onChange={handleNumberChange(setWorkedHours)}
@@ -385,6 +389,8 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
                       {t.manualHours}
                     </label>
                     <input
+                      id="manualHours"
+                      name="manualHours"
                       type="number"
                       value={manualHours}
                       onChange={handleNumberChange(setManualHours)}
@@ -398,6 +404,8 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
                       {t.paidDaysOff}
                     </label>
                     <input
+                      id="paidDaysOff"
+                      name="paidDaysOff"
                       type="number"
                       value={paidDaysOff}
                       onChange={handleNumberChange(setPaidDaysOff)}
@@ -417,6 +425,8 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
                       {t.kpi}
                     </label>
                     <input
+                      id="kpi"
+                      name="kpi"
                       type="number"
                       value={kpi}
                       onChange={handleNumberChange(setKpi)}
@@ -431,6 +441,8 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
                       {t.otrs}
                     </label>
                     <input
+                      id="otrs"
+                      name="otrs"
                       type="number"
                       value={otrs}
                       onChange={handleNumberChange(setOtrs)}
@@ -448,6 +460,8 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
                       {t.complaints}
                     </label>
                     <input
+                      id="complaints"
+                      name="complaints"
                       type="number"
                       value={complaints}
                       onChange={handleNumberChange(setComplaints)}
@@ -461,6 +475,8 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
                       {t.mistakes}
                     </label>
                     <input
+                      id="mistakes"
+                      name="mistakes"
                       type="number"
                       value={mistakes}
                       onChange={handleNumberChange(setMistakes)}
@@ -481,6 +497,8 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
                       {t.hourlyRate}
                     </label>
                     <input
+                      id="hourlyRate"
+                      name="hourlyRate"
                       type="number"
                       value={hourlyRate}
                       onChange={handleNumberChange(setHourlyRate)}
@@ -495,6 +513,8 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
                       {t.additionalBonus}
                     </label>
                     <input
+                      id="additionalBonus"
+                      name="additionalBonus"
                       type="number"
                       value={additionalBonus}
                       onChange={handleNumberChange(setAdditionalBonus)}
