@@ -49,7 +49,7 @@ service cloud.firestore {
     }
 
     function isDocOwner() {
-      return isAuthenticated() && request.auth.uid == resource.data.uid;
+      return isAuthenticated() && (resource == null || request.auth.uid == resource.data.uid);
     }
 
     function uidUnchanged() {
@@ -76,32 +76,39 @@ service cloud.firestore {
     // Domain Validators
     // ===============================================================
     function isValidUser(data) {
-      return hasOnlyAllowedFields(['uid', 'name', 'email', 'language', 'hourlyRate', 'maxHours']) &&
+      return hasOnlyAllowedFields(['uid', 'name', 'email', 'language', 'hourlyRate', 'maxHours', 'kpi', 'otrs', 'complaints', 'mistakes', 'manualHours', 'additionalBonus']) &&
              data.uid is string && data.uid.size() > 0 && data.uid.size() < 100 &&
              data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
              data.email is string && isValidEmail(data.email) &&
              (!('language' in data) || (data.language in ['bs', 'en'])) &&
              (!('hourlyRate' in data) || (data.hourlyRate is number && data.hourlyRate >= 0)) &&
-             (!('maxHours' in data) || (data.maxHours is number && data.maxHours >= 0));
+             (!('maxHours' in data) || (data.maxHours is number && data.maxHours >= 0)) &&
+             (!('kpi' in data) || (data.kpi is number && data.kpi >= 0)) &&
+             (!('otrs' in data) || (data.otrs is number && data.otrs >= 0)) &&
+             (!('complaints' in data) || (data.complaints is number && data.complaints >= 0)) &&
+             (!('mistakes' in data) || (data.mistakes is number)) &&
+             (!('manualHours' in data) || (data.manualHours is number)) &&
+             (!('additionalBonus' in data) || (data.additionalBonus is number));
     }
 
     function isValidSalaryRecord(data) {
       return hasOnlyAllowedFields(['uid', 'month', 'baseSalary', 'bonus', 'totalPay', 'createdAt']) &&
              data.uid is string && data.uid.size() > 0 && data.uid.size() < 100 &&
              data.month is string && data.month.size() > 0 && data.month.size() < 20 &&
-             data.baseSalary is number && data.baseSalary >= 0 &&
-             data.bonus is number && data.bonus >= 0 &&
-             data.totalPay is number && data.totalPay >= 0 &&
+             data.baseSalary is number &&
+             data.bonus is number &&
+             data.totalPay is number &&
              data.createdAt is string && data.createdAt.size() > 0 && data.createdAt.size() < 50;
     }
 
     function isValidShift(data) {
-      return hasOnlyAllowedFields(['uid', 'date', 'startTime', 'endTime', 'type', 'createdAt']) &&
+      return hasOnlyAllowedFields(['uid', 'date', 'startTime', 'endTime', 'type', 'createdAt', 'googleEventId']) &&
              data.uid is string && data.uid.size() > 0 && data.uid.size() < 100 &&
              data.date is string && data.date.size() > 0 && data.date.size() < 20 &&
              (!('startTime' in data) || (data.startTime is string && data.startTime.size() >= 0 && data.startTime.size() < 10)) &&
              (!('endTime' in data) || (data.endTime is string && data.endTime.size() >= 0 && data.endTime.size() < 10)) &&
              (!('type' in data) || (data.type is string && data.type.size() > 0 && data.type.size() < 20)) &&
+             (!('googleEventId' in data) || (data.googleEventId is string && data.googleEventId.size() > 0 && data.googleEventId.size() < 200)) &&
              data.createdAt is string && data.createdAt.size() > 0 && data.createdAt.size() < 50;
     }
 
