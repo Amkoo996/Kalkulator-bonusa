@@ -4,8 +4,8 @@ export const translations = {
     loginDesc: 'Prijavite se putem Google-a za sigurno praćenje plaće i bonusa.',
     loginBtn: 'Prijavi se s Google-om',
     logout: 'Odjavi se',
-    greeting: 'Bok',
-    subtitle: 'Tvoj osobni kalkulator plaće i bonusa',
+    greeting: 'Ćao',
+    subtitle: 'Tvoj privatni kalkulator plate i bonusa',
     countdownPrefix: 'Vrijeme do sljedeće isplate (1. radni dan u mjesecu):',
     paydayToday: 'Danas je isplata!',
     dataEntry: 'Unos Podataka za',
@@ -20,7 +20,7 @@ export const translations = {
     paidDaysOff: 'Plaćeni slobodni dani (po 9h)',
     manualHours: 'Dodatni Sati (Ručno)',
     additionalBonus: 'Dodatni Bonus (€)',
-    history: 'Povijest Isplata',
+    history: 'Historija Isplata',
     month: 'Mjesec',
     baseSalary: 'Osnovica',
     bonus: 'Bonus',
@@ -48,6 +48,7 @@ export const translations = {
     scanTextBtn: 'Skeniraj Tekst',
     errorMissingKey: 'API ključ nedostaje!',
     errorParsing: 'Greška pri čitanju podataka. Pokušajte ponovo.',
+    savedSuccess: 'Obračun uspješno spašen!',
   },
   en: {
     loginTitle: 'Bonus Calculator',
@@ -98,6 +99,7 @@ export const translations = {
     scanTextBtn: 'Scan Text',
     errorMissingKey: 'API key is missing!',
     errorParsing: 'Error parsing data. Please try again.',
+    savedSuccess: 'Record saved successfully!',
   }
 };
 
