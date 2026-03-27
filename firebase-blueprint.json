@@ -30,6 +30,30 @@
         "maxHours": {
           "type": "number",
           "description": "Default maximum hours (fond sati)."
+        },
+        "kpi": {
+          "type": "number",
+          "description": "Default KPI."
+        },
+        "otrs": {
+          "type": "number",
+          "description": "Default OTRS."
+        },
+        "complaints": {
+          "type": "number",
+          "description": "Default complaints."
+        },
+        "mistakes": {
+          "type": "number",
+          "description": "Default mistakes."
+        },
+        "manualHours": {
+          "type": "number",
+          "description": "Default manual hours."
+        },
+        "additionalBonus": {
+          "type": "number",
+          "description": "Default additional bonus."
         }
       },
       "required": ["uid", "name", "email"]
@@ -87,6 +111,14 @@
         "endTime": {
           "type": "string",
           "description": "End time in HH:mm format."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of shift (regular or slobodan_dan)."
+        },
+        "googleEventId": {
+          "type": "string",
+          "description": "ID of the event in Google Calendar."
         },
         "createdAt": {
           "type": "string",
