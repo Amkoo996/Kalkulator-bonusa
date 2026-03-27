@@ -8,9 +8,6 @@ export const getCalendarToken = async (): Promise<string | null> => {
   try {
     const provider = new GoogleAuthProvider();
     provider.addScope('https://www.googleapis.com/auth/calendar.events');
-    // Force select account to ensure we get the consent screen if needed, 
-    // but usually it's seamless if already granted.
-    provider.setCustomParameters({ prompt: 'consent' });
     
     const result = await signInWithPopup(auth, provider);
     const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -37,8 +34,9 @@ export const getValidToken = async (): Promise<string | null> => {
     return token;
   }
   
-  // Token expired or doesn't exist, need to re-auth
-  return await getCalendarToken();
+  // Token expired or doesn't exist. We shouldn't trigger a popup here because 
+  // browsers block popups not directly triggered by a user click.
+  throw new Error('Sesija za Google Kalendar je istekla. Molimo vas da ponovo kliknete na "Poveži Google Kalendar".');
 };
 
 export const addEventToCalendar = async (
