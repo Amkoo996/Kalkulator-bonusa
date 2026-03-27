@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar as CalendarIcon, Clock, Plus, Trash2, Edit2, X, Check } from 'lucide-react';
-import { collection, doc, setDoc, query, where, onSnapshot, deleteDoc } from 'firebase/firestore';
+import { Calendar as CalendarIcon, Clock, Plus, Trash2, Edit2, X, Check, CalendarDays } from 'lucide-react';
+import { collection, doc, setDoc, query, where, onSnapshot, deleteDoc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Language, translations } from '../i18n';
 import toast from 'react-hot-toast';
+import { addEventToCalendar, deleteEventFromCalendar, getCalendarToken } from '../googleCalendar';
 
 interface Shift {
   id: string;
@@ -11,6 +12,7 @@ interface Shift {
   startTime: string;
   endTime: string;
   type: 'regular' | 'slobodan_dan';
+  googleEventId?: string;
 }
 
 interface ManualScheduleProps {
@@ -36,6 +38,28 @@ export default function ManualSchedule({ uid, lang, onHoursCalculated }: ManualS
   const [isCustom, setIsCustom] = useState(false);
   const [customStart, setCustomStart] = useState('08:00');
   const [customEnd, setCustomEnd] = useState('16:00');
+  
+  // Google Calendar Sync
+  const [syncEnabled, setSyncEnabled] = useState(() => {
+    return localStorage.getItem('gcal_sync_enabled') === 'true';
+  });
+
+  const toggleSync = async () => {
+    if (!syncEnabled) {
+      const token = await getCalendarToken();
+      if (token) {
+        setSyncEnabled(true);
+        localStorage.setItem('gcal_sync_enabled', 'true');
+        toast.success('Google Kalendar uspješno povezan!');
+      } else {
+        toast.error('Nije uspjelo povezivanje sa Google Kalendarom.');
+      }
+    } else {
+      setSyncEnabled(false);
+      localStorage.setItem('gcal_sync_enabled', 'false');
+      toast.success('Sinhronizacija sa kalendarom isključena.');
+    }
+  };
 
   useEffect(() => {
     if (!uid) return;
@@ -114,14 +138,31 @@ export default function ManualSchedule({ uid, lang, onHoursCalculated }: ManualS
     const shiftId = `${uid}_${selectedDate}`;
     
     try {
-      await setDoc(doc(db, 'shifts', shiftId), {
+      let googleEventId = null;
+      
+      if (syncEnabled) {
+        const loadingToast = toast.loading('Sinhronizacija sa kalendarom...');
+        googleEventId = await addEventToCalendar(selectedDate, start, end, type);
+        toast.dismiss(loadingToast);
+        if (!googleEventId) {
+          toast.error('Nije uspjelo dodavanje u Google Kalendar. Možda trebate ponovo povezati.');
+        }
+      }
+
+      const shiftData: any = {
         uid,
         date: selectedDate,
         startTime: start,
         endTime: end,
         type,
         createdAt: new Date().toISOString()
-      });
+      };
+
+      if (googleEventId) {
+        shiftData.googleEventId = googleEventId;
+      }
+
+      await setDoc(doc(db, 'shifts', shiftId), shiftData);
       setIsModalOpen(false);
       toast.success('Smjena uspješno spašena!');
     } catch (error) {
@@ -134,6 +175,15 @@ export default function ManualSchedule({ uid, lang, onHoursCalculated }: ManualS
     if (!uid) return;
     const shiftId = `${uid}_${dateStr}`;
     try {
+      // Get shift first to check for googleEventId
+      const shiftDoc = await getDoc(doc(db, 'shifts', shiftId));
+      if (shiftDoc.exists()) {
+        const data = shiftDoc.data();
+        if (data.googleEventId && syncEnabled) {
+          await deleteEventFromCalendar(data.googleEventId);
+        }
+      }
+
       await deleteDoc(doc(db, 'shifts', shiftId));
       toast.success('Smjena obrisana!');
     } catch (error) {
@@ -224,10 +274,24 @@ export default function ManualSchedule({ uid, lang, onHoursCalculated }: ManualS
   return (
     <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200/60 p-3 sm:p-8 mt-6 sm:mt-8 overflow-hidden text-center">
       <div className="flex flex-col items-center justify-center mb-4 sm:mb-6 gap-4">
-        <h2 className="text-lg sm:text-xl font-semibold flex items-center justify-center gap-2 text-center">
-          <CalendarIcon className="w-5 h-5 text-indigo-500" />
-          Raspored smjena
-        </h2>
+        <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-4">
+          <h2 className="text-lg sm:text-xl font-semibold flex items-center justify-center gap-2 text-center">
+            <CalendarIcon className="w-5 h-5 text-indigo-500" />
+            Raspored smjena
+          </h2>
+          
+          <button 
+            onClick={toggleSync}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+              syncEnabled 
+                ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' 
+                : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200'
+            }`}
+          >
+            <CalendarDays className="w-4 h-4" />
+            {syncEnabled ? 'Kalendar Povezan' : 'Poveži Google Kalendar'}
+          </button>
+        </div>
         
         <div className="flex items-center justify-center w-full sm:w-auto gap-2 sm:gap-4 bg-slate-50 p-1 rounded-xl border border-slate-100 mx-auto">
           <button onClick={prevMonth} className="p-2 hover:bg-white rounded-lg transition-colors shadow-sm">
