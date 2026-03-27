@@ -90,26 +90,27 @@ export const addEventToCalendar = async (
     },
   };
 
-  try {
-    const response = await fetch(CALENDAR_API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(event),
-    });
+  const response = await fetch(CALENDAR_API_URL, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(event),
+  });
 
-    if (!response.ok) {
-      throw new Error('Failed to create event');
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.error("Calendar API Error:", errorData);
+    let errMsg = errorData.error?.message || 'Greška pri komunikaciji sa Google Kalendarom';
+    if (errMsg.includes('has not been used in project') || errMsg.includes('API has not been used')) {
+      errMsg = "Google Calendar API nije omogućen na vašem Firebase projektu. Morate ga omogućiti u Google Cloud Console-u.";
     }
-
-    const data = await response.json();
-    return data.id; // Return the Google Calendar Event ID
-  } catch (error) {
-    console.error("Error adding to calendar:", error);
-    return null;
+    throw new Error(errMsg);
   }
+
+  const data = await response.json();
+  return data.id; // Return the Google Calendar Event ID
 };
 
 export const deleteEventFromCalendar = async (eventId: string): Promise<boolean> => {
