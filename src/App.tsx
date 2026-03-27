@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Calculator, Clock, Percent, Euro, Target, MessageSquareWarning, FileWarning, Info, Save, History, LogOut, CalendarDays, Globe, Bell, BellRing } from 'lucide-react';
 import { auth, db, loginWithGoogle, logoutUser } from './firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { collection, doc, setDoc, query, where, onSnapshot, orderBy } from 'firebase/firestore';
+import { collection, doc, setDoc, getDoc, query, where, onSnapshot, orderBy } from 'firebase/firestore';
 import { translations, Language } from './i18n';
 import ManualSchedule from './components/ManualSchedule';
 import { useNotifications } from './hooks/useNotifications';
@@ -185,6 +185,27 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
       setHistory(records);
     });
 
+    // Load user preferences from Firestore
+    const loadPreferences = async () => {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          if (data.maxHours !== undefined) setMaxHours(String(data.maxHours));
+          if (data.kpi !== undefined) setKpi(String(data.kpi));
+          if (data.otrs !== undefined) setOtrs(String(data.otrs));
+          if (data.complaints !== undefined) setComplaints(String(data.complaints));
+          if (data.mistakes !== undefined) setMistakes(String(data.mistakes));
+          if (data.hourlyRate !== undefined) setHourlyRate(String(data.hourlyRate));
+          if (data.manualHours !== undefined) setManualHours(String(data.manualHours));
+          if (data.additionalBonus !== undefined) setAdditionalBonus(String(data.additionalBonus));
+        }
+      } catch (error) {
+        console.error("Failed to load user preferences", error);
+      }
+    };
+    loadPreferences();
+
     return () => unsubscribe();
   }, [user.uid]);
 
@@ -264,16 +285,44 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
   const saveCurrentMonth = async () => {
     const recordId = `${user.uid}_${currentMonth}`;
     try {
-      await setDoc(doc(db, 'salaryHistory', recordId), {
-        uid: user.uid,
-        month: currentMonth,
-        baseSalary,
-        bonus,
-        totalPay,
-        createdAt: new Date().toISOString()
+      const docRef = doc(db, 'salaryHistory', recordId);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        await setDoc(docRef, {
+          uid: user.uid,
+          month: currentMonth,
+          baseSalary,
+          bonus,
+          totalPay
+        }, { merge: true });
+      } else {
+        await setDoc(docRef, {
+          uid: user.uid,
+          month: currentMonth,
+          baseSalary,
+          bonus,
+          totalPay,
+          createdAt: new Date().toISOString()
+        });
+      }
+
+      // Save user preferences to Firestore so they sync across devices
+      await setDoc(doc(db, 'users', user.uid), {
+        maxHours: Number(maxHours) || 0,
+        kpi: Number(kpi) || 0,
+        otrs: Number(otrs) || 0,
+        complaints: Number(complaints) || 0,
+        mistakes: Number(mistakes) || 0,
+        hourlyRate: Number(hourlyRate) || 0,
+        manualHours: Number(manualHours) || 0,
+        additionalBonus: Number(additionalBonus) || 0
       }, { merge: true });
+
+      toast.success(t.savedSuccess);
     } catch (error) {
       console.error("Error saving record", error);
+      toast.error("Greška pri spašavanju obračuna.");
     }
   };
 
