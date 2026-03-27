@@ -142,10 +142,17 @@ export default function ManualSchedule({ uid, lang, onHoursCalculated }: ManualS
       
       if (syncEnabled) {
         const loadingToast = toast.loading('Sinhronizacija sa kalendarom...');
-        googleEventId = await addEventToCalendar(selectedDate, start, end, type);
-        toast.dismiss(loadingToast);
-        if (!googleEventId) {
-          toast.error('Nije uspjelo dodavanje u Google Kalendar. Možda trebate ponovo povezati.');
+        try {
+          googleEventId = await addEventToCalendar(selectedDate, start, end, type);
+          toast.dismiss(loadingToast);
+        } catch (err: any) {
+          toast.dismiss(loadingToast);
+          toast.error(`Kalendar greška: ${err.message}`, { duration: 6000 });
+          if (err.message.includes('omogućen')) {
+            setSyncEnabled(false);
+            localStorage.setItem('gcal_sync_enabled', 'false');
+          }
+          return; // Stop saving if calendar sync fails
         }
       }
 
@@ -359,6 +366,8 @@ export default function ManualSchedule({ uid, lang, onHoursCalculated }: ManualS
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1 text-center">Početak</label>
                     <input 
+                      id="customStart"
+                      name="customStart"
                       type="time" 
                       value={customStart}
                       onChange={(e) => setCustomStart(e.target.value)}
@@ -368,6 +377,8 @@ export default function ManualSchedule({ uid, lang, onHoursCalculated }: ManualS
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1 text-center">Kraj</label>
                     <input 
+                      id="customEnd"
+                      name="customEnd"
                       type="time" 
                       value={customEnd}
                       onChange={(e) => setCustomEnd(e.target.value)}
