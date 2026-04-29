@@ -276,8 +276,14 @@ function BonusCalculator({ user, lang, setLang }: { user: User, lang: Language, 
     const finalBonus = Math.max(0, tp * 0.5 * hourRatio);
     setBonus(finalBonus);
 
-    // Salary (Worked Hours + Manual Hours + Paid Days Off * 9) * Hourly Rate
-    const calculatedBaseSalary = (totalWorkedHours + (numPaidDaysOff * 9)) * numHourlyRate;
+    // Salary calculation based on the new formula for paid days off:
+    // (Max Hours * Hourly Rate) / 21 * Paid Days Off
+    const fullHoursSalary = numMaxHours * numHourlyRate;
+    const paidDayOffValue = (fullHoursSalary / 21) * numPaidDaysOff;
+    const workedSalary = totalWorkedHours * numHourlyRate;
+    
+    // Total base salary combines worked hours plus the correctly calculated paid days off
+    const calculatedBaseSalary = workedSalary + paidDayOffValue;
     setBaseSalary(calculatedBaseSalary);
     setTotalPay(calculatedBaseSalary + finalBonus + numAdditionalBonus);
   }, [maxHours, workedHours, manualHours, kpi, otrs, complaints, mistakes, hourlyRate, paidDaysOff, additionalBonus]);
